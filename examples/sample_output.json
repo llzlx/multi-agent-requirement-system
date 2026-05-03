@@ -1,0 +1,98 @@
+{
+  "requirement_id": "REQ-20260502-A7F3B2",
+  "original_requirement": "开发一个用户管理系统，支持用户注册、登录、权限管理、密码重置",
+  "timestamp": "2026-05-02T20:30:00Z",
+  "modules": [
+    {
+      "module_id": "MOD-001",
+      "module_name": "用户注册模块",
+      "module_type": "core",
+      "description": "支持用户通过邮箱或手机号注册账号",
+      "api_endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/register",
+          "description": "用户注册接口",
+          "request_body": {
+            "email": "string",
+            "password": "string",
+            "username": "string"
+          },
+          "response": {
+            "user_id": "string",
+            "token": "string"
+          }
+        }
+      ],
+      "pseudo_code": "function register(email, password, username) {\n  validateInput(email, password, username);\n  checkIfUserExists(email);\n  hashedPassword = hash(password);\n  user = createUser(email, hashedPassword, username);\n  sendVerificationEmail(email);\n  return { user_id: user.id, token: generateToken(user) };\n}",
+      "test_suites": [
+        {
+          "suite_name": "用户注册测试",
+          "cases": [
+            {
+              "case_id": "TC-001",
+              "title": "正常注册流程",
+              "steps": ["输入邮箱", "输入密码", "输入用户名", "点击注册"],
+              "expected": "注册成功，收到验证邮件"
+            }
+          ]
+        }
+      ],
+      "estimated_effort_days": 3.5
+    },
+    {
+      "module_id": "MOD-002",
+      "module_name": "用户登录模块",
+      "module_type": "core",
+      "description": "支持用户通过邮箱/手机号+密码登录",
+      "api_endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/login",
+          "description": "用户登录接口",
+          "request_body": {
+            "email": "string",
+            "password": "string"
+          },
+          "response": {
+            "user_id": "string",
+            "token": "string",
+            "expires_in": "number"
+          }
+        }
+      ],
+      "pseudo_code": "function login(email, password) {\n  user = findUserByEmail(email);\n  if (!user) throw 'User not found';\n  if (!verifyPassword(password, user.hashedPassword)) throw 'Invalid password';\n  updateLastLoginTime(user.id);\n  return { user_id: user.id, token: generateToken(user), expires_in: 86400 };\n}",
+      "test_suites": [
+        {
+          "suite_name": "用户登录测试",
+          "cases": [
+            {
+              "case_id": "TC-002",
+              "title": "正常登录流程",
+              "steps": ["输入邮箱", "输入密码", "点击登录"],
+              "expected": "登录成功，返回token"
+            }
+          ]
+        }
+      ],
+      "estimated_effort_days": 2.5
+    }
+  ],
+  "summary": {
+    "total_modules": 2,
+    "total_api_endpoints": 2,
+    "total_test_cases": 2,
+    "estimated_effort": {
+      "total_days": 6.0,
+      "by_module": {
+        "MOD-001": 3.5,
+        "MOD-002": 2.5
+      }
+    },
+    "risk_assessment": {
+      "level": "low",
+      "factors": ["需求明确", "技术成熟"]
+    }
+  },
+  "jira_tasks": []
+}
